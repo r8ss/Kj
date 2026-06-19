@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: ${{ github.event.inputs.TEST_DWNL == 'true' && fromJSON('["o1s"]') || fromJSON('["a34x","dm1q","o1s","p3s","r9s","t2s"]') }}
+        target: ["dm1q", "p3s"]
 
     steps:
       - name: Checkout repo
@@ -119,9 +119,12 @@ jobs:
           ./scripts/make_rom.sh -z
 
       - name: Upload to GoFile
-        if: ${{ github.event.inputs.TEST_DWNL != 'true' }}
         run: |
           ZIP_FILE=$(find out -maxdepth 1 -type f -name "*.zip" | head -n 1)
-          RESPONSE=$(curl -s -F "file=@$ZIP_FILE" -F "token=${{ secrets.GOFILE_ID }}" -F "folderId=${{ secrets.GOFILE_FOLDER_ID }}" "https://upload-eu-par.gofile.io/uploadFile")
-          echo "Download link:"
+          RESPONSE=$(curl -s -F "file=@$ZIP_FILE" -F "token=${{ secrets.GOFILE_TOKEN }}" -F "folderId=${{ secrets.GOFILE_FOLDER_ID }}" "https://upload-eu-par.gofile.io/uploadFile")
+          echo "Uploaded successfully! Download link:"
           echo "$RESPONSE" | jq -r '.data.downloadPage'
+          echo "MD5:"
+          md5sum "$ZIP_FILE"
+          echo "SHA256:"
+          sha256sum "$ZIP_FILE"
