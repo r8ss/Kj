@@ -22,7 +22,7 @@ jobs:
   build:
     env:
       GIT_DBG: ${{ github.event.inputs.DEBUG }}
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
 
     strategy:
       fail-fast: false
